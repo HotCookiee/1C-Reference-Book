@@ -17,8 +17,7 @@ class HandbookApplication : Application() {
         super.onCreate()
 
         CoroutineScope(Dispatchers.IO).launch {
-            val seeder = DatabaseSeeder()
-            seeder.seedDatabase(database)
+            DatabaseSeeder.seedDatabase(database)
         }
     }
 }

@@ -11,25 +11,26 @@ import com.example.a1c_reference_book.screens.ArticleDetailScreen
 import com.example.a1c_reference_book.screens.ArticlesScreen
 import com.example.a1c_reference_book.screens.CategoriesScreen
 import com.example.a1c_reference_book.screens.FavoritesScreen
+import com.example.a1c_reference_book.screens.SettingsScreen
+import com.example.a1c_reference_book.viewmodels.ThemeViewModel
 
 sealed class Screen(val route: String) {
     object Categories : Screen("categories")
-
     object Articles : Screen("articles/{categoryId}") {
         fun createRoute(categoryId: Int) = "articles/$categoryId"
     }
-
     object ArticleDetail : Screen("article_detail/{articleId}") {
         fun createRoute(articleId: Int) = "article_detail/$articleId"
     }
-
     object Favorites : Screen("favorites")
+    object Settings : Screen("settings")
 }
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    database: AppDatabase
+    database: AppDatabase,
+    themeViewModel: ThemeViewModel
 ) {
     NavHost(
         navController = navController,
@@ -44,6 +45,12 @@ fun NavGraph(
                 },
                 onFavoritesClick = {
                     navController.navigate(Screen.Favorites.route)
+                },
+                onSettingsClick = {
+                    navController.navigate(Screen.Settings.route)
+                },
+                onArticleClick = { articleId ->
+                    navController.navigate(Screen.ArticleDetail.createRoute(articleId))
                 }
             )
         }
@@ -91,6 +98,16 @@ fun NavGraph(
                 onArticleClick = { articleId ->
                     navController.navigate(Screen.ArticleDetail.createRoute(articleId))
                 },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = Screen.Settings.route) {
+            SettingsScreen(
+                database = database,
+                themeViewModel = themeViewModel,
                 onBackClick = {
                     navController.popBackStack()
                 }

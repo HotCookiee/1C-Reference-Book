@@ -8,15 +8,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavoriteDao {
 
-    @Query("SELECT articleId FROM favorites")
-    fun getFavoriteArticleIds(): Flow<List<Int>>
-
     @Query("""
-        SELECT articles.* FROM articles 
-        INNER JOIN favorites ON articles.id = favorites.articleId
-        ORDER BY articles.title ASC
+        SELECT a.* FROM articles a 
+        INNER JOIN favorites f ON a.id = f.articleId 
+        ORDER BY f.dateAdded DESC
     """)
     fun getFavoriteArticles(): Flow<List<Article>>
+
+    @Query("SELECT COUNT(*) FROM favorites WHERE articleId = :articleId")
+    suspend fun isFavorite(articleId: Int): Int
 
     @Insert
     suspend fun insertFavorite(favorite: Favorite)
@@ -24,6 +24,6 @@ interface FavoriteDao {
     @Query("DELETE FROM favorites WHERE articleId = :articleId")
     suspend fun deleteFavorite(articleId: Int)
 
-    @Query("SELECT COUNT(*) FROM favorites WHERE articleId = :articleId")
-    suspend fun isFavorite(articleId: Int): Int
+    @Query("DELETE FROM favorites")
+    suspend fun deleteAllFavorites()
 }

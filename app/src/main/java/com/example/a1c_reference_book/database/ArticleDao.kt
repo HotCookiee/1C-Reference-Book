@@ -20,6 +20,12 @@ interface ArticleDao {
     @Query("SELECT * FROM articles ORDER BY title ASC")
     fun getAllArticles(): Flow<List<Article>>
 
+    @Query("SELECT * FROM articles ORDER BY viewCount DESC LIMIT :limit")
+    fun getTopArticles(limit: Int): Flow<List<Article>>
+
+    @Query("UPDATE articles SET viewCount = viewCount + 1 WHERE id = :articleId")
+    suspend fun incrementViewCount(articleId: Int)
+
     @Insert
     suspend fun insertArticle(article: Article)
 }

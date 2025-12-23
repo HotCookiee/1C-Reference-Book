@@ -10,5 +10,6 @@ data class Article(
     val categoryId: Int,
     val title: String,
     val content: String,
-    val dateAdded: Long = System.currentTimeMillis()
+    val dateAdded: Long = System.currentTimeMillis(),
+    val viewCount: Int = 0
 )

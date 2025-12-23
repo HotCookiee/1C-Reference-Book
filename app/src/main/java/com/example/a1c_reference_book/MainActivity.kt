@@ -3,33 +3,35 @@ package com.example.a1c_reference_book
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.rememberNavController
+import com.example.a1c_reference_book.database.AppDatabase
 import com.example.a1c_reference_book.navigation.NavGraph
-import com.example.a1c_reference_book.ui.theme._1C_Reference_BookTheme
+import com.example.a1c_reference_book.ui.theme.A1cReferenceBookTheme
+import com.example.a1c_reference_book.viewmodels.ThemeViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
-        val app = application as HandbookApplication
+        val database = AppDatabase.getDatabase(applicationContext)
+
 
         setContent {
-            _1C_Reference_BookTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberNavController()
+            val themeViewModel = remember { ThemeViewModel(applicationContext) }
+            val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
 
-                    NavGraph(
-                        navController = navController,
-                        database = app.database
-                    )
-                }
+            A1cReferenceBookTheme(darkTheme = isDarkTheme) {
+                val navController = rememberNavController()
+                NavGraph(
+                    navController = navController,
+                    database = database,
+                    themeViewModel = themeViewModel
+                )
             }
         }
     }

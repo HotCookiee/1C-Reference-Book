@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class Favorite(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val articleId: Int
+    val articleId: Int,
+    val dateAdded: Long = System.currentTimeMillis()
 )

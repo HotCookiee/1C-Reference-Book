@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -12,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.a1c_reference_book.components.ArticleCard
 import com.example.a1c_reference_book.components.SearchBar
@@ -57,14 +59,38 @@ fun ArticlesScreen(
             )
 
             if (articles.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.SearchOff,
+                        contentDescription = null,
+                        modifier = Modifier.size(100.dp),
+                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
                     Text(
                         text = if (searchQuery.isEmpty()) "Загрузка..." else "Ничего не найдено",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center
                     )
+
+                    if (searchQuery.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Попробуйте изменить\nпоисковый запрос",
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                    }
                 }
             } else {
                 LazyColumn(
