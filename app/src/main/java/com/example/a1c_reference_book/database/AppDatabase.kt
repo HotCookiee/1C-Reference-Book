@@ -6,8 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [Category::class, Article::class, Favorite::class],
-    version = 1,
+    entities = [Category::class, Article::class, Favorite::class, Note::class, Rating::class],
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -15,6 +15,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun articleDao(): ArticleDao
     abstract fun favoriteDao(): FavoriteDao
+    abstract fun noteDao(): NoteDao
+    abstract fun ratingDao(): RatingDao
 
     companion object {
         @Volatile
@@ -26,7 +28,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "handbook_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

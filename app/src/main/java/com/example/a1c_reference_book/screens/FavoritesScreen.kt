@@ -71,7 +71,7 @@ fun FavoritesScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Нажмите ⭐ на статье,\nчтобы добавить её в избранное",
+                    text = "Нажмите ❤️ на статье,\nчтобы добавить её в избранное",
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)

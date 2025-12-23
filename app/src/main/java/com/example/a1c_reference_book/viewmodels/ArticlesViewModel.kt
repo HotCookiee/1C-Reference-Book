@@ -14,14 +14,16 @@ class ArticlesViewModel(
     private val categoryId: Int
 ) : ViewModel() {
 
-    private val _articles = MutableStateFlow<List<Article>>(emptyList())
-    val articles: StateFlow<List<Article>> = _articles
-
     private val _category = MutableStateFlow<Category?>(null)
     val category: StateFlow<Category?> = _category
 
+    private val _articles = MutableStateFlow<List<Article>>(emptyList())
+    val articles: StateFlow<List<Article>> = _articles
+
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
+
+    private var allArticles: List<Article> = emptyList()
 
     init {
         loadCategory()
@@ -38,32 +40,25 @@ class ArticlesViewModel(
     private fun loadArticles() {
         viewModelScope.launch {
             database.articleDao().getArticlesByCategory(categoryId).collect { articlesList ->
-                filterArticles(articlesList)
+                allArticles = articlesList
+                filterArticles()
             }
         }
     }
 
     fun onSearchQueryChange(query: String) {
         _searchQuery.value = query
-        viewModelScope.launch {
-            if (query.isEmpty()) {
-                database.articleDao().getArticlesByCategory(categoryId).collect { articlesList ->
-                    _articles.value = articlesList
-                }
-            } else {
-                database.articleDao().searchArticles(query).collect { articlesList ->
-                    _articles.value = articlesList.filter { it.categoryId == categoryId }
-                }
-            }
-        }
+        filterArticles()
     }
 
-    private fun filterArticles(articlesList: List<Article>) {
-        _articles.value = if (_searchQuery.value.isEmpty()) {
-            articlesList
+    private fun filterArticles() {
+        val query = _searchQuery.value
+        _articles.value = if (query.isEmpty()) {
+            allArticles
         } else {
-            articlesList.filter {
-                it.title.contains(_searchQuery.value, ignoreCase = true)
+            allArticles.filter { article ->
+                article.title.contains(query, ignoreCase = true) ||
+                        article.content.contains(query, ignoreCase = true)
             }
         }
     }
